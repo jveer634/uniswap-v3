@@ -4,7 +4,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "dotenv/config";
 
 const config: HardhatUserConfig = {
-    solidity: "0.8.24",
+    solidity: "0.7.5",
 
     networks: {
         hardhat: {
