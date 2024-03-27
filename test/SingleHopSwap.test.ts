@@ -1,5 +1,6 @@
 import { ethers } from "hardhat";
-import { SingleHopSwap, IERC20, Address } from "../typechain-types";
+import { SingleHopSwap, IERC20 } from "../typechain-types";
+import { expect } from "chai";
 
 describe("SingleHopSwap", () => {
     let swap: SingleHopSwap, dai: IERC20, usdc: IERC20, user: string;
@@ -37,7 +38,9 @@ describe("SingleHopSwap", () => {
             ethers.formatUnits(await dai.balanceOf(user), 18)
         );
         await dai.approve(swap.target, DAI_AMOUNT);
-        await swap.swapExactInputSingle(DAI_AMOUNT);
+        await expect(
+            swap.swapExactInputSingle(DAI_AMOUNT)
+        ).to.changeTokenBalance(dai, user, -DAI_AMOUNT);
 
         console.log(
             "USDC after after: ",
@@ -59,7 +62,9 @@ describe("SingleHopSwap", () => {
             ethers.formatUnits(await dai.balanceOf(user), 18)
         );
         await dai.approve(swap.target, DAI_AMOUNT);
-        await swap.swapExactOutputSingle(USDC_AMOUNT, DAI_AMOUNT);
+        await expect(
+            swap.swapExactOutputSingle(USDC_AMOUNT, DAI_AMOUNT)
+        ).to.changeTokenBalance(usdc, user, USDC_AMOUNT);
 
         console.log(
             "USDC after after: ",
