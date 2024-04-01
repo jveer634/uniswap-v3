@@ -10,13 +10,14 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 
-// is IERC721Receiver
-contract LiquidityContract {
+import "hardhat/console.sol";
+
+contract LiquidityContract is IERC721Receiver {
     using SafeERC20 for IERC20;
 
     IERC20 public DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
     IERC20 public USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
-    uint24 public constant poolFee = 100; // 3000 / 10000 = 0.3%
+    uint24 public constant poolFee = 100; // 100 / 10000 = 0.01%
 
     INonfungiblePositionManager public immutable positionManager;
 
@@ -80,6 +81,11 @@ contract LiquidityContract {
         uint256 amountAdd0,
         uint256 amountAdd1
     ) external returns (uint128 liquidity, uint256 amount0, uint256 amount1) {
+        DAI.safeTransferFrom(msg.sender, address(this), amountAdd0);
+        USDC.safeTransferFrom(msg.sender, address(this), amountAdd1);
+        DAI.approve(address(positionManager), amountAdd0);
+        USDC.approve(address(positionManager), amountAdd1);
+
         INonfungiblePositionManager.IncreaseLiquidityParams
             memory params = INonfungiblePositionManager
                 .IncreaseLiquidityParams({
@@ -100,11 +106,8 @@ contract LiquidityContract {
         uint256 tokenId,
         uint128 amount
     ) external returns (uint256 amount0, uint256 amount1) {
-        // caller must be the owner of the NFT
-        // positionManager.safeTransferFrom(msg.sender, address(this), tokenId);
+        positionManager.safeTransferFrom(msg.sender, address(this), tokenId);
 
-        // amount0Min and amount1Min are price slippage checks
-        // if the amount received after burning is not greater than these minimums, transaction will fail
         INonfungiblePositionManager.DecreaseLiquidityParams
             memory params = INonfungiblePositionManager
                 .DecreaseLiquidityParams({
@@ -117,14 +120,13 @@ contract LiquidityContract {
 
         (amount0, amount1) = positionManager.decreaseLiquidity(params);
 
-        DAI.safeTransfer(msg.sender, amount0);
-        USDC.safeTransfer(msg.sender, amount1);
+        positionManager.safeTransferFrom(address(this), msg.sender, tokenId);
     }
 
     function collect(
         uint256 tokenId
     ) external returns (uint256 amount0, uint256 amount1) {
-        // positionManager.safeTransferFrom(msg.sender, address(this), tokenId);
+        positionManager.safeTransferFrom(msg.sender, address(this), tokenId);
 
         INonfungiblePositionManager.CollectParams
             memory params = INonfungiblePositionManager.CollectParams({
@@ -137,12 +139,14 @@ contract LiquidityContract {
         (amount0, amount1) = positionManager.collect(params);
     }
 
-    // function onERC721Received(
-    //     address operator,
-    //     address,
-    //     uint256 tokenId,
-    //     bytes calldata
-    // ) external override returns (bytes4) {
-    //     return this.onERC721Received.selector;
-    // }
+    // customize this function according to project
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        // get position information
+        return this.onERC721Received.selector;
+    }
 }
