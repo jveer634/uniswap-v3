@@ -4,14 +4,13 @@ import {
     IERC20,
     INonfungiblePositionManager,
 } from "../typechain-types";
-import { expect, should } from "chai";
+import { expect } from "chai";
 
-describe.only("LiquidityContract", () => {
+describe("LiquidityContract", () => {
     let liquidity: LiquidityContract,
         dai: IERC20,
         usdc: IERC20,
         user: string,
-        // tokenId: bigint,
         positManager: INonfungiblePositionManager;
 
     let obj: [bigint, bigint, bigint, bigint] & {
