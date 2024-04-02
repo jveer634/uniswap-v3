@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { FlashSwap, IERC20 } from "../typechain-types";
 
 describe("FlashSwap", () => {
-    let flash: FlashSwap, dai: IERC20, usdc: IERC20, user: string;
+    let flash: FlashSwap, dai: IERC20, user: string;
 
     const DAI_WHALE = "0xe5F8086DAc91E039b1400febF0aB33ba3487F29A";
     const DAI_TOKEN = "0x6B175474E89094C44Da98b954EedeAC495271d0F";

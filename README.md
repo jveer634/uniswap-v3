@@ -1,13 +1,38 @@
-# Sample Hardhat Project
+# Uniswap V3 Demo
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project demonstrates on how to integrate uniswap v3 into our solidity smart contracts. We are deploying contracts on forked ethereum mainnet and performing test cases on them.
 
-Try running some of the following tasks:
+Please be noted that the contracts are not production ready. Modify them according to your project requirements.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+The contracts covers topics on
+
+-   how to make a token swap
+    -   Using SingleHop method
+    -   Using Multihop method
+-   how to do a flash swap
+-   how to manage liquidity.
+
+Technology used
+
+-   hardhat
+-   typescript
+
+To setup
+
+```sh
+    git clone https://github.com/jveer634/uniswap-v3-demo.git
+    cd uniswap-v3-demo
+    npm i
+```
+
+To compile
+
+```sh
+    npx hardhat compile
+```
+
+To test
+
+```sh
+    npx hardhat test
 ```
